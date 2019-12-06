@@ -32,6 +32,40 @@ class _QuizPageState extends State<QuizPage> {
     'Approximately one quarter of human bones are in the feet.',
     'A slug\'s blood is green.'
   ];
+
+  List<bool> answers = [false, true, true];
+
+  int questionNumber = 0;
+
+  void checkAnswer(userAnswer) {
+    if (answers[questionNumber] == userAnswer) {
+      setState(() {
+        scoreKeeper.add(Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+        nextQuestionNumber();
+      });
+    } else {
+      setState(() {
+        scoreKeeper.add(Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+        nextQuestionNumber();
+      });
+    }
+  }
+
+  int nextQuestionNumber() {
+    if (questionNumber == questions.length - 1) {
+      questionNumber = 0;
+    } else {
+      questionNumber++;
+    }
+    return questionNumber;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,7 +78,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                questions[questionNumber],
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -69,12 +103,7 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
-                setState(() {
-                  scoreKeeper.add(Icon(
-                    Icons.check,
-                    color: Colors.green,
-                  ));
-                });
+                checkAnswer(true);
               },
             ),
           ),
@@ -93,18 +122,31 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                setState(() {
-                  scoreKeeper.add(Icon(
-                    Icons.close,
-                    color: Colors.red,
-                  ));
-                });
+                checkAnswer(false);
               },
             ),
           ),
         ),
         Row(
-          children: scoreKeeper,
+          children: <Widget>[
+            FlatButton(
+              child: Text(
+                'Score: ',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  scoreKeeper = [];
+                });
+              },
+            ),
+            Row(
+              children: scoreKeeper,
+            ),
+          ],
         ),
       ],
     );
