@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//TODO: Step 2 - Import the rFlutter_Alert package here.
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'quiz_brain.dart';
 
 QuizBrain quizBrain = QuizBrain();
@@ -31,30 +31,36 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  void checkAnswer(userAnswer) {
+  void checkAnswer(bool userAnswer) {
     // Getting actual answer..
     bool answer = quizBrain.getQuestionAnswer();
 
     // Setting state..
     setState(() {
-      //TODO: Step 4 - Use IF/ELSE to check if we've reached the end of the quiz. If so,
-      //On the next line, you can also use if (quizBrain.isFinished()) {}, it does the same thing.
+      //Checking if reached the end of the quiz..
 
-      if (answer == userAnswer) {
-        //TODO Step 4 Part A - show an alert using rFlutter_alert,
+      if (quizBrain.isFinished()) {
+        //Modified for our purposes:
+        Alert(
+          context: context,
+          title: 'Finished!',
+          desc: 'You\'ve reached the end of the quiz.',
+        ).show();
 
-        //TODO Step 4 Part C - reset the questionNumber,
+        // Resetting the questionNumber..
+        quizBrain.reset();
 
-        //TODO Step 4 Part D - empty out the scoreKeeper.
-
-        scoreKeeper.add(Icon(Icons.check, color: Colors.green));
+        // Emptying out the scoreKeeper..
+        scoreKeeper = [];
+      } else {
+        //If not reached the end, answer checking..
+        if (answer == userAnswer) {
+          scoreKeeper.add(Icon(Icons.check, color: Colors.green));
+        } else {
+          scoreKeeper.add(Icon(Icons.close, color: Colors.red));
+        }
+        quizBrain.nextQuestion();
       }
-
-      //TODO: Step 6 - If we've not reached the end, ELSE do the answer checking steps below 👇
-      else {
-        scoreKeeper.add(Icon(Icons.close, color: Colors.red));
-      }
-      quizBrain.nextQuestion();
     });
   }
 
